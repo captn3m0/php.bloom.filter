@@ -297,7 +297,7 @@ class Bloom
             return $this->set[$position];
         } else {
             $in_a = strpos($this->alphabet, $this->set[$position]);
-            $this->set[$position] = ($this->alphabet[$in_a + $add] != null) ? $this->alphabet[$in_a + $add] : $this->set[$position];
+            $this->set[$position] = (isset($this->alphabet[$in_a + $add])) ? $this->alphabet[$in_a + $add] : $this->set[$position];
         }
     }
     

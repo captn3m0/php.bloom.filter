@@ -1,9 +1,9 @@
 {
-    "name": "mrspartak/php.bloom.filter",
+    "name": "razorpay/php-bloom-filter",
     "type": "library",
     "description": "The best way to check object existence and save memory and disk usage.",
     "keywords": ["bloom", "filter"],
-    "homepage": "https://github.com/mrspartak/php.bloom.filter",
+    "homepage": "https://github.com/Razorpay/php-bloom-filter",
     "license": "BSD-3-Clause",
     "authors": [
         {

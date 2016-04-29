@@ -1,6 +1,6 @@
 php.bloom.filter
 ================
-[![Build Status](https://travis-ci.org/mrspartak/php.bloom.filter.png)](https://travis-ci.org/mrspartak/php.bloom.filter)
+[![Build Status](https://travis-ci.org/razorpay/php-bloom-filter.png)](https://travis-ci.org/razorpay/php-bloom-filter)
 
 [Bloom filter](http://en.wikipedia.org/wiki/Bloom_filter) - is the best way to check object existance and save memory and disk usage.
 
@@ -18,7 +18,7 @@ Examples and benchmarks are available in examples directory.
 
 ##### Simple code example:
 ```php
-include 'bloom.class.php';
+use Razorpay\BloomFilter\Bloom;
 
 $parameters = array(
   'entries_max' => 2
@@ -69,3 +69,7 @@ You can also cache the whole object, just using serialize() and unserialize() fu
 * to cooldown HDD usage
 * to speedup checking of object existence (with counter 40% slower, but still more faster than native)
 * to save memory
+
+##### License:
+
+BSD-3-Clause

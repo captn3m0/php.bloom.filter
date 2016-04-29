@@ -1,27 +1,31 @@
-<?
-require '../bloom.class.php';
-require 'other/BloomFilter/BloomFilter.php';
-define('NL', "<br>\r\n# ");
+<?php
+
 /*
 	deceze / BloomFilter
 	https://github.com/deceze/BloomFilter
 */
 
-$number = ( (int) $_GET['number'] ) ? (int) $_GET['number'] : 1000;
+use Razorpay\BloomFilter\Bloom;
+use Razorpay\BloomFilter\Others\BloomFilter;
+
+$number = 1000;
 /*
 * Init object for $num entries
 **/
-$bloom = new Bloom(array(
-	'entries_max' => $number,
-	'error_chance' => 0.01,
-	'hash' => array(
-		'strtolower' => false
-	)
-));
+$bloom = new Bloom(
+    array(
+    'entries_max' => $number,
+    'error_chance' => 0.01,
+    'hash' => array(
+        'strtolower' => false
+    )
+    )
+);
 $foe = BloomFilter::constructForTypicalSize($bloom->set_size, $bloom->entries_max);
 
-while( count($vars) < $number )
-	$vars[] = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 10);
+while (count($vars) < $number) {
+    $vars[] = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 10);
+}
 
 /*
 * Insert to bloom 
@@ -34,13 +38,15 @@ $stat['bloom']['insert']['e'] = get_stat();
 * Insert to array
 **/
 $stat['foe']['insert']['s'] = get_stat();
-for( $i = 0; $i < $number; $i++ )
-	$foe->add($vars[$i]);
+for ($i = 0; $i < $number; $i++) {
+    $foe->add($vars[$i]);
+}
 $stat['foe']['insert']['e'] = get_stat();
 
-while( count($check) < $number/2 )
-	$check[] = substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
-	
+while (count($check) < $number/2) {
+    $check[] = substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
+}
+    
 /*
 * Check existance with bloom
 **/
@@ -52,8 +58,9 @@ $stat['bloom']['has']['e'] = get_stat();
 * Check existance in array
 **/
 $stat['foe']['has']['s'] = get_stat();
-for( $i = 0; $i < $number; $i++ )
-	$stat['foe']['has']['errors'][] = $foe->maybeInSet($check[$i]);
+for ($i = 0; $i < $number; $i++) {
+    $stat['foe']['has']['errors'][] = $foe->maybeInSet($check[$i]);
+}
 $stat['foe']['has']['e'] = get_stat();
 
 
@@ -86,12 +93,12 @@ echo '<strong>## Setting ##</strong>', NL;
 echo 'Bloom time: '.$result['bloom']['insert']['time'].' sec.', NL;
 echo 'Foe time: '.$result['foe']['insert']['time'].' sec.', NL;
 echo advantage($result['bloom']['insert']['time']/$result['foe']['insert']['time']), NL;
-	
+    
 echo 'Bloom memory: '.$result['bloom']['insert']['mem'].' bytes.', NL;
 echo 'Foe memory: '.$result['foe']['insert']['mem'].' bytes.', NL;
 echo advantage($result['bloom']['insert']['mem']/$result['foe']['insert']['mem']), NL, NL;
-	
-	
+    
+    
 echo '<strong>## Checking ##</strong>', NL;
 echo 'Bloom time: '.$result['bloom']['has']['time'].' sec.', NL;
 echo 'Foe time: '.$result['foe']['has']['time'].' sec.', NL;
@@ -114,19 +121,3 @@ echo advantage($result['bloom']['total']['mem']/$result['foe']['total']['mem']),
 echo '<strong>## Errors ##</strong>', NL;
 echo 'Bloom: '.array_sum($stat['bloom']['has']['errors']).' from '.$bloom->error_chance*count($check).' allowed by '.($bloom->error_chance*100).'% error chance.', NL;
 echo 'Foe: '.array_sum($stat['foe']['has']['errors']).'.';
-
-function get_stat() {
-	return array(
-		'memory' => memory_get_usage(),
-		'timestamp' => gettimeofday(true) 
-	);
-}
-function advantage($koef) {
-	if($koef < 1)
-		echo '<span style="color:green">advantage <strong>'.(1/$koef).'</strong> times</span>', NL;
-	else
-		echo '<span style="color:red">disadvantage <strong>'.$koef.'</strong> times</span>', NL;
-}
-function lnk($number) {
-	echo ' # <a href="?number='.$number.'">'.$number.'</a> # ';
-}

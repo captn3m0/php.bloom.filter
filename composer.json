@@ -11,6 +11,9 @@
             "email": "mr.spartak@rambler.ru"
         }
     ],
+    "scripts": {
+        "test": "phpunit"
+    },
     "require": {
         "php": ">=5.3"
     },

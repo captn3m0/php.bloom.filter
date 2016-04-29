@@ -1,13 +1,14 @@
-<?
-require '../bloom.class.php';
-require 'other/BloomFilter/BloomFilter.php';
-define('NL', "<br>\r\n# ");
+<?php
+
 /*
 	deceze / BloomFilter
 	https://github.com/deceze/BloomFilter
 */
 
-$number = ( (int) $_GET['number'] ) ? (int) $_GET['number'] : 1000;
+use Razorpay\BloomFilter\Bloom;
+use Razorpay\BloomFilter\Others\BloomFilter;
+
+$number = 1000;
 /*
 * Init object for $num entries
 **/
@@ -114,19 +115,3 @@ echo advantage($result['bloom']['total']['mem']/$result['foe']['total']['mem']),
 echo '<strong>## Errors ##</strong>', NL;
 echo 'Bloom: '.array_sum($stat['bloom']['has']['errors']).' from '.$bloom->error_chance*count($check).' allowed by '.($bloom->error_chance*100).'% error chance.', NL;
 echo 'Foe: '.array_sum($stat['foe']['has']['errors']).'.';
-
-function get_stat() {
-	return array(
-		'memory' => memory_get_usage(),
-		'timestamp' => gettimeofday(true) 
-	);
-}
-function advantage($koef) {
-	if($koef < 1)
-		echo '<span style="color:green">advantage <strong>'.(1/$koef).'</strong> times</span>', NL;
-	else
-		echo '<span style="color:red">disadvantage <strong>'.$koef.'</strong> times</span>', NL;
-}
-function lnk($number) {
-	echo ' # <a href="?number='.$number.'">'.$number.'</a> # ';
-}

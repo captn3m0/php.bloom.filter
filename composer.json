@@ -12,7 +12,8 @@
         }
     ],
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit",
+        "benchmark": "php benchmark.php"
     },
     "require": {
         "php": ">=5.3"
@@ -23,6 +24,11 @@
     "autoload": {
         "psr-4": {
             "Razorpay\\BloomFilter\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Razorpay\\BloomFilter\\Others\\": "third-party"
         }
     }
 }

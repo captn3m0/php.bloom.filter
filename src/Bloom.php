@@ -1,4 +1,7 @@
 <?php
+
+namespace Razorpay\BloomFilter;
+
 /**
 * Bloom filter php
 * 
@@ -114,7 +117,7 @@ class Bloom
 	* @param array
 	* @return BloomObject
 	*/
-	public function __construct($setup = null)
+	public function __construct($setup = [])
 	{
 		/**
 		*	Default parameters
@@ -310,174 +313,5 @@ class Bloom
 			
 			return ($boolean === true) ? true : $c/$this->hash_count;
 		}
-	}
-}
-
-/**
-* MapClass
-* Use cases:
-* -check user's setup parameters and merge it with default one
-*
-* Map view:
-* paramskey => arrayMap
-*
-* ArrayMap view
-* -null (boolean): checks required parameter
-* -type (string): checks for type of parameter (values from gettype())
-* -min, max (float, int): allowed range of number value
-*
-* Throws Ecpetion with message
-*/
-class Map {
-	
-	/**
-	* Main method, applie's default and given parameters with map
-	*
-	* @param array map
-	* @param array default parameters
-	* @param array given parameters
-	* @return array merged result parameters
-	*/
-	static public function apply($map, $initial, $setup) {
-		self::circl($map, $setup);	
-		return array_merge($initial, (array) $setup);	
-	}
-	
-	/**
-	* Recursively follows map
-	*
-	* @param array map
-	* @param array given parameters
-	*/
-	static private function circl($map, $rabbit) {
-		foreach($map as $k => $element) {
-			if (is_array($element) && (!array_key_exists('type', $element) || !$element['type']) && array_key_exists($k, $rabbit)) {
-				unset($rabbit[$k]);
-				self::circl($element, $rabbit[$k]);
-			} else if (array_key_exists($k, $rabbit)) {
-				self::check($element, $rabbit[$k]);
-				unset($rabbit[$k]);
-			}
-		}
-		
-		if($rabbit)
-			throw new Exception('Unexpected array arguments. '.json_encode( $rabbit ));
-	}
-	
-	/**
-	* Check map rules for given object
-	*
-	* @param array map
-	* @param mixed given parameters element
-	*/
-	static private function check($map, $rabbit) {
-		/**
-		*	required statement check
-		*/
-		if (array_key_exists('null', $map) && $map['null'] === false && !$rabbit)
-			throw new Exception('Must be not NULL');
-		
-		/**
-		*	If no element exists, exit
-		*/
-		if(!$rabbit)
-			return true;
-			
-		/**
-		*	Check for type
-		*/
-		if (array_key_exists('type', $map) && $map['type'] !== gettype($rabbit) && $map['type'])
-			throw new Exception('Wrong type '.gettype($rabbit).'! Must be '.$map['type']);
-		
-		/**
-		*	Check for minimal range
-		*/
-		if (array_key_exists('min', $map) && $map['min'] > $rabbit && $map['min'] !== null)
-			throw new Exception('Interval overflow by '.$rabbit.'! Must be '.$map['min']);
-			
-		/**
-		*	Check for maximal range
-		*/
-		if (array_key_exists('min', $map) && $map['min'] > $rabbit && $map['min'] !== null)
-			throw new Exception('Interval overflow by '.$rabbit.'! Must be '.$map['max']);	
-	}
-}
-
-/**
-* HashClass
-* Use cases:
-* -creates random hash generator
-*/
-class Hash {
-	/**
-	* Seed for unification every HashObject
-	* @var array
-	*/
-	public $seed;
-	
-	/**
-	* Parameters
-	* @var array
-	*/
-	public $params;
-	
-	/**
-	* Map of user setup parameters
-	* @access private
-	* @var boolean
-	*/
-	private $map = array(
-		'strtolower' => array(
-			'type' => 'boolean'
-		)
-	);
-	
-	/**
-	* Initialization
-	*
-	* @param array parameters
-	* @return object HashObject
-	*/
-	public function __construct($setup = null, $hashes = null) {
-		/**
-		*	Default parameters
-		*/
-		$params = array(
-			'strtolower' => true
-		);
-		
-		/**
-		*	Applying income user parameters 
-		*/
-		$params = Map::apply($this->map, $params, $setup);
-		$this->params = $params;
-		
-		/**
-		*	Creating unique seed
-		*/
-		$seeds = array();
-		if($hashes)
-			foreach($hashes as $hash)
-				$seeds = array_merge( (array) $seeds, (array) $hash->seed );
-		do {
-			$hash = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
-		} while( in_array($hash, $seeds) );
-		$this->seed[] = $hash;
-	}
-	
-	/**
-	* Hash use's crc32 and md5 algorithms to get number less than $size parameter
-	*
-	* @param mixed object to hash
-	* @param int max number to return
-	* @return int
-	*/
-	public function crc($string, $size) {
-		$string = strval($string);
-		
-		if($this->params['strtolower'] === true)
-			$string = mb_strtolower($string, 'UTF-8');
-		
-		return abs( crc32( md5($this->seed[0] . $string) ) ) % $size;
 	}
 }

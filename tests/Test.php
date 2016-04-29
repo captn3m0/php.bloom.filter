@@ -1,8 +1,8 @@
 <?php
-error_reporting(E_ERROR | E_PARSE);
-include '../bloom.class.php';
 
-class Test extends PHPUnit_Framework_TestCase
+use Razorpay\BloomFilter\Bloom;
+
+class BloomFilterTest extends PHPUnit_Framework_TestCase
 {
 	public function testInitiation()
 	{
@@ -51,7 +51,7 @@ class Test extends PHPUnit_Framework_TestCase
 		}
 		sort( $seeds );
 		foreach( $seeds as $k => $rslt )
-			if( $seeds[$k+1] && $seeds[$k+1] == $rslt ) {
+			if( isset($seeds[$k+1]) && $seeds[$k+1] == $rslt ) {
 				$this->fail('Similar results by '.$bloom->hash_count.' hashes and seeds: '.json_encode($seeds).'.');
 			}
 	}
@@ -74,8 +74,9 @@ class Test extends PHPUnit_Framework_TestCase
 			'entries_max' => 1000,
 		);
 		$bloom = new Bloom($params);
+		$string = [];
 		
-		while( !$string[ $params['entries_max'] ] ) {
+		while( !array_key_exists($params['entries_max'], $string) ) {
 			$string[] = uniqid();
 			$results_bool[] = true;
 			$results_num[] = 1;
@@ -92,8 +93,11 @@ class Test extends PHPUnit_Framework_TestCase
 			'entries_max' => 2000,
 		);
 		$bloom = new Bloom($params);
+
+		$string = [];
 		
-		while( !$string[ $params['entries_max']/2 ] ) {
+		while( !array_key_exists($params['entries_max']/2, $string) ) {
+
 			$string[] = uniqid() . rand();
 			$check[] = uniqid() . rand();
 			$results_bool[] = false;

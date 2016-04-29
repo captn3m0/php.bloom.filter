@@ -9,6 +9,7 @@ php:
   - nightly
 
 before_script:
- - cd ./tests/
+  - composer self-update
+  - composer install --prefer-source --no-interaction --dev
 
-script: phpunit Test.php
+script: phpunit

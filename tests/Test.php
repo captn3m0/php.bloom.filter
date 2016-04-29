@@ -1,6 +1,8 @@
 <?php
+namespace Razorpay\BloomFilter\Tests;
 
 use Razorpay\BloomFilter\Bloom;
+use PHPUnit_Framework_TestCase;
 
 class BloomFilterTest extends PHPUnit_Framework_TestCase
 {
@@ -162,13 +164,6 @@ class BloomFilterTest extends PHPUnit_Framework_TestCase
     
     public function testEmptyCacheTest()
     {
-        if (is_file('counter')) {
-            unlink('counter');
-        }
-        if (is_file('default')) {
-            unlink('default');
-        }
-        
         $params = array(
          'counter' => true
         );
@@ -182,8 +177,8 @@ class BloomFilterTest extends PHPUnit_Framework_TestCase
          'default' => $bloom_default
         );
         
-        file_put_contents('counter', serialize($bloom['counter']));
-        file_put_contents('default', serialize($bloom['default']));
+        file_put_contents('/tmp/counter', serialize($bloom['counter']));
+        file_put_contents('/tmp/default', serialize($bloom['default']));
         
         $bloom_counter->set($vars);
         $bloom_default->set($vars);
@@ -193,8 +188,8 @@ class BloomFilterTest extends PHPUnit_Framework_TestCase
         $bloom_counter = null;
         $bloom_default = null;
         
-        $bloom_counter = unserialize(file_get_contents('counter'));
-        $bloom_default = unserialize(file_get_contents('default'));
+        $bloom_counter = unserialize(file_get_contents('/tmp/counter'));
+        $bloom_default = unserialize(file_get_contents('/tmp/default'));
         $bloom_counter->set($vars);
         $bloom_default->set($vars);
         
@@ -204,13 +199,6 @@ class BloomFilterTest extends PHPUnit_Framework_TestCase
     
     public function testFilledCacheTest()
     {
-        if (is_file('counter')) {
-            unlink('counter');
-        }
-        if (is_file('default')) {
-            unlink('default');
-        }
-        
         $params = array(
          'counter' => true
         );
@@ -228,8 +216,8 @@ class BloomFilterTest extends PHPUnit_Framework_TestCase
          'counter' => $bloom_counter,
          'default' => $bloom_default
         );
-        file_put_contents('counter', serialize($bloom['counter']));
-        file_put_contents('default', serialize($bloom['default']));
+        file_put_contents('/tmp/counter', serialize($bloom['counter']));
+        file_put_contents('/tmp/default', serialize($bloom['default']));
         
         $set_counter = $bloom_counter->set;
         $set_default = $bloom_default->set;
@@ -237,8 +225,8 @@ class BloomFilterTest extends PHPUnit_Framework_TestCase
         $bloom_counter = null;
         $bloom_default = null;
         
-        $bloom_counter = unserialize(file_get_contents('counter'));
-        $bloom_default = unserialize(file_get_contents('default'));
+        $bloom_counter = unserialize(file_get_contents('/tmp/counter'));
+        $bloom_default = unserialize(file_get_contents('/tmp/default'));
         
         $this->assertEquals($res, $bloom_counter->has($vars));
         $this->assertEquals($res, $bloom_default->has($vars));

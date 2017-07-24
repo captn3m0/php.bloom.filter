@@ -2,9 +2,9 @@
 namespace Razorpay\BloomFilter\Tests;
 
 use Razorpay\BloomFilter\Bloom;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class BloomFilterTest extends PHPUnit_Framework_TestCase
+class BloomFilterTest extends TestCase
 {
     public function testInitiation()
     {
